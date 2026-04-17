@@ -64,7 +64,7 @@ const MainSidebar = () => {
                             size={isMobile ? "sm" : "icon"}
                             className={isMobile ? cn(
                                 "relative h-10 w-full justify-start gap-3 px-3 text-sm",
-                                isActive && "after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:rounded-full after:bg-brand"
+                                isActive && "after:absolute after:bottom-0 after:left-3 after:h-px after:w-4 after:rounded-full after:bg-brand"
                             ) : undefined}
                         >
                             {route.icon}

@@ -4,7 +4,6 @@ import { useAuthActions } from "./hooks/api";
 
 const providers = [
     "google",
-    "github",
 ]
 
 const Main = () => {
