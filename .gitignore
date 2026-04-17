@@ -109,3 +109,4 @@ ai.sh
 __pycache__/
 *.pyc
 *.pyo
+.codex
