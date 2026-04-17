@@ -93,11 +93,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ providers, onSignIn, className }) =
                 <p className="text-sm text-muted-foreground">Sign in to access your account</p>
             </div>
 
-            <form className="mx-auto w-full max-w-72 space-y-4" onSubmit={handlePasswordLogin} noValidate>
+            <form className="mx-auto w-full max-w-80 space-y-4 lg:max-w-72" onSubmit={handlePasswordLogin} noValidate>
                 <div className="space-y-2">
                     <div
                         className={cn(
-                            "flex h-10 w-full items-center gap-2 rounded-md border bg-background px-3 transition-colors focus-within:border-brand",
+                            "flex h-11 w-full items-center gap-2 rounded-md border bg-background px-3 transition-colors focus-within:border-brand lg:h-10",
                             errors.email ? "border-destructive" : "border-white/40"
                         )}
                     >
@@ -121,7 +121,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ providers, onSignIn, className }) =
                 <div className="space-y-2">
                     <div
                         className={cn(
-                            "flex h-10 w-full items-center gap-2 rounded-md border bg-background px-3 transition-colors focus-within:border-brand",
+                            "flex h-11 w-full items-center gap-2 rounded-md border bg-background px-3 transition-colors focus-within:border-brand lg:h-10",
                             errors.password ? "border-destructive" : "border-white/40"
                         )}
                     >
@@ -142,12 +142,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ providers, onSignIn, className }) =
                     )}
                 </div>
 
-                <Button type="submit" className="h-10 w-full rounded-md text-sm font-medium">
+                <Button type="submit" className="h-11 w-full rounded-md text-sm font-medium lg:h-10">
                     Log in
                 </Button>
             </form>
 
-            <div className="mx-auto flex w-full max-w-72 items-center gap-3">
+            <div className="mx-auto flex w-full max-w-80 items-center gap-3 lg:max-w-72">
                 <div className="h-px flex-1 bg-border" />
                 <span className="text-xs text-muted-foreground">or</span>
                 <div className="h-px flex-1 bg-border" />
@@ -158,7 +158,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ providers, onSignIn, className }) =
                     <Button
                         key={provider}
                         variant="outline"
-                        className="h-10 w-full max-w-72 rounded-md border border-white/70 bg-transparent text-sm font-medium hover:border-white hover:bg-accent"
+                        className="h-11 w-full max-w-80 rounded-md border border-white/70 bg-transparent text-sm font-medium hover:border-white hover:bg-accent lg:h-10 lg:max-w-72"
                         onClick={() => {
                             onSignIn?.(provider);
                         }}
@@ -195,14 +195,31 @@ const AuthVisual = () => (
     </div>
 );
 
+const MobileAuthVisual = () => (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden lg:hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,#282826_0%,#34515a_50%,#ff80bf_100%)]" />
+        <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-black/65" />
+
+        <div className="absolute inset-x-0 bottom-0 mx-auto h-[78vh] max-w-lg text-white opacity-55 blur-[1px]">
+            <img
+                src="/arcei.png"
+                alt="Classical sculpture"
+                className="absolute bottom-[-24%] left-1/2 z-10 h-[145%] -translate-x-1/2 object-contain opacity-55 grayscale"
+            />
+        </div>
+    </div>
+);
+
 const Auth: React.FC<AuthProps> = ({ providers, onSignIn }) => {
     return (
-        <div className="grid min-h-screen grid-cols-1 bg-background lg:grid-cols-[minmax(26rem,1fr)_minmax(32rem,1fr)] lg:p-6">
-            <div className="flex min-h-screen flex-col lg:min-h-0">
-                <div className="flex flex-1 items-center justify-center">
+        <div className="relative min-h-screen overflow-hidden bg-background lg:grid lg:grid-cols-[minmax(26rem,1fr)_minmax(32rem,1fr)] lg:p-6">
+            <MobileAuthVisual />
+            <div className="relative z-10 flex min-h-screen flex-col pb-[calc(env(safe-area-inset-bottom)+1rem)] lg:min-h-0 lg:pb-0">
+                <div className="flex flex-1 items-center justify-center pb-0">
                     <AuthForm providers={providers} onSignIn={onSignIn} />
                 </div>
-                <footer className="px-4">
+                <footer className="hidden px-4 lg:block">
                     <AuthFooter />
                 </footer>
             </div>
