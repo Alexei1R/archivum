@@ -1,33 +1,23 @@
 import type React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Header, Profile } from "@/shared/components";
 import { ROUTES } from "@/shared/constants";
 import { Bell } from "lucide-react";
 import ThemeSwitcher from "../theme/theme-switcher";
-import { WorkspaceSelector } from "./workspace-selector";
 
 const MainHeader: React.FC = () => {
-
-    const location = useLocation();
-    const isEditorPage = location.pathname.startsWith(ROUTES.EDITOR);
-
     const navigate = useNavigate();
-
 
     return (
         <Header>
-            <Header.Content
-                variant={isEditorPage ? "floating" : "default"}
-            >
+            <Header.Content variant="default">
                 <Header.Logo
-                    title={isEditorPage ? "" : "fuse"}
+                    title="fuse"
                     onClick={() => {
-                        navigate(ROUTES.PROJECTS);
+                        navigate(ROUTES.ROUTES);
                     }} />
 
                 <Header.Group className="ml-4">
-                    <WorkspaceSelector />
-
                     <Button
                         variant="ghost"
                         size="icon"

@@ -1,13 +1,11 @@
 import { ErrorBoundary } from "@/shared/components";
 import { ROUTES } from "@/shared/constants/routes.constants";
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Layout } from "./layout";
-import { CommandBoundary } from "./boundary";
 import { AuthProtected } from "@/features/auth/protected";
 
 export const router = createBrowserRouter([
     {
-        element: <CommandBoundary />,
         errorElement: <ErrorBoundary />,
         children: [
             {
@@ -17,34 +15,28 @@ export const router = createBrowserRouter([
                         element: <Layout />,
                         children: [
                             {
-                                path: ROUTES.EDITOR,
-                                element: <Outlet />, //NOTE: groups /editor and /editor/:id
-                                children: [
-                                    {
-                                        index: true,
-                                        lazy: () => import("@/features/editor/editor.page"),
-                                    },
-                                    {
-                                        path: ":id",
-                                        lazy: () => import("@/features/editor/editor.page"),
-                                    },
-                                ],
+                                index: true,
+                                lazy: () => import("@/features/home/home.page"),
                             },
                             {
-                                path: ROUTES.DOCUMENTATION,
-                                lazy: () => import("@/features/docs/docs.page"),
+                                path: ROUTES.MUSEUMS,
+                                lazy: () => import("@/features/museums/museums.page"),
                             },
                             {
-                                path: ROUTES.PROJECTS,
-                                lazy: () => import("@/features/projects/projects.page"),
+                                path: ROUTES.MAP,
+                                lazy: () => import("@/features/map/map.page"),
                             },
                             {
-                                path: ROUTES.WORKSPACE,
-                                lazy: () => import("@/features/workspace/workspace.page"),
+                                path: ROUTES.EVENTS,
+                                lazy: () => import("@/features/events/events.page"),
                             },
                             {
-                                path: ROUTES.SETTINGS,
-                                lazy: () => import("@/features/settings/settings.page"),
+                                path: ROUTES.ROUTES,
+                                lazy: () => import("@/features/routes/routes.page"),
+                            },
+                            {
+                                path: ROUTES.ADMIN,
+                                lazy: () => import("@/features/admin/admin.page"),
                             },
                         ],
                     },
@@ -56,7 +48,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "*",
-                element: <Navigate to={ROUTES.PROJECTS} replace />,
+                element: <Navigate to={ROUTES.HOME} replace />,
             },
         ],
     },

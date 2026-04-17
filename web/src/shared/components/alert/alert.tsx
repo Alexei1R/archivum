@@ -2,7 +2,6 @@ import { useAlertStore } from '@/shared/store';
 import { AlertCircle, CheckCircle, Info, XCircle } from 'lucide-react';
 import { Alert } from '../ui/alert';
 import { Button } from '../ui';
-import { useHotkeys, type UseHotkeyConfig } from '@/shared/hooks';
 
 const iconMap = {
     info: Info,
@@ -31,8 +30,6 @@ const SystemAlert = () => {
         }
         closeAlert(alert.id);
     };
-
-
 
     if (alerts.length === 0) return null;
 

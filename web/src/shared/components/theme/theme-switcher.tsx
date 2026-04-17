@@ -1,7 +1,5 @@
 import { Moon, Sun } from "lucide-react";
 import { cn } from "@/shared/utils";
-import useCommandRegistry from "@/features/command/store/registry.store";
-import { useEffect } from "react";
 import { useHotkeys, type UseHotkeyConfig } from "@/shared/hooks";
 import { useTheme } from "./theme-provider";
 import { Button } from "../ui";
@@ -22,7 +20,6 @@ export default function ThemeSwitcher({
     const { theme, setTheme } = useTheme();
     const toggleTheme = () => setTheme(prev => (prev === "light" ? "dark" : "light"));
     const isIconOnly = variant === "icon";
-    const { register, unregister } = useCommandRegistry();
 
     const hotkeyConfigs: UseHotkeyConfig[] =
         [
@@ -34,24 +31,7 @@ export default function ThemeSwitcher({
                 scope: "global"
             },
         ]
-    const { } = useHotkeys(hotkeyConfigs)
-
-    useEffect(() => {
-        register({
-            id: "theme:toggle",
-            name: "Toggle Theme",
-            description: "Toggle between light and dark mode",
-            group: "settings",
-            keywords: ["theme", "dark", "light", "mode"],
-            icon: null,
-            color: null,
-            shortcut: "ctrl+shift+t",
-            run: () => setTheme(prev => (prev === "light" ? "dark" : "light")),
-            scope: "global",
-        });
-
-        return () => unregister("theme:toggle");
-    }, [register, unregister, setTheme]);
+    useHotkeys(hotkeyConfigs)
 
     return (
         <Button

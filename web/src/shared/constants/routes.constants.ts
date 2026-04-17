@@ -1,9 +1,10 @@
 const ROUTES = {
-    PROJECTS: "/projects",
-    DOCUMENTATION: "/docs",
-    EDITOR: "/editor",
-    SETTINGS: "/settings",
-    WORKSPACE: "/workspace",
+    HOME: "/",
+    MUSEUMS: "/museums",
+    MAP: "/map",
+    EVENTS: "/events",
+    ROUTES: "/routes",
+    ADMIN: "/admin",
     AUTH: "/auth",
 }
 export { ROUTES }

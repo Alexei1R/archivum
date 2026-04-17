@@ -1,0 +1,55 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      CONFIG_FILE: /app/configs/docker.toml
+      AUTH_SESSION_SECRET: ${AUTH_SESSION_SECRET:-local-docker-session-secret-change-for-shared-envs}
+      AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID:-local-docker-google-client-id}
+      AUTH_GOOGLE_CLIENT_SECRET: ${AUTH_GOOGLE_CLIENT_SECRET:-local-docker-google-client-secret}
+      MAIL_FROM: ${MAIL_FROM:-local@example.com}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-local-mail-password}
+      MAIL_NAME: ${MAIL_NAME:-Fuse Local}
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: fuse
+      POSTGRES_USER: fuse
+      POSTGRES_PASSWORD: fuse_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fuse -d fuse"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

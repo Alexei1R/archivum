@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { useIsMobile } from "@/shared/hooks";
 import { Sheet } from "./sheet";
 import { Button } from "./button";
-import { ChevronRight, CircleChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 type SidebarProps = React.ComponentProps<"div"> & {
     side?: "left" | "right";
@@ -47,9 +47,8 @@ const SidebarRoot: React.FC<SidebarProps> = ({
     width = "16rem",
     ...props
 }) => {
-
-
     const isMobile = useIsMobile()
+    const sidebarWidth = isMobile ? "75vw" : width;
 
     return (
         <>
@@ -60,21 +59,21 @@ const SidebarRoot: React.FC<SidebarProps> = ({
                             variant="ghost"
                             size="lg"
                             className={cn(
-                                "absolute top-[15vh] left-0 z-50  w-8 h-8 rounded-none rounded-r-xl hover:scale-105  -translate-x-2 hover:-translate-x-0 transition-all ease-in-out",
+                                "absolute top-24 left-0 z-50 h-11 w-11 rounded-none rounded-r-xl hover:scale-105 -translate-x-2 hover:-translate-x-0 transition-all ease-in-out",
                                 "bg-brand/10 hover:bg-blue-500/30 ",
                             )}
                         >
-                            <ChevronRight />
+                            <ChevronRight className="size-5" />
                         </Button>
                     </Sheet.Trigger>
                     <Sheet.Content
                         showClose={false}
                         side="left"
                         className={cn(
-                            "bg-background flex h-full flex-col items-start min-w-[12rem]",
+                            "bg-background flex h-full flex-col items-stretch min-w-[12rem] rounded-r-2xl border-r border-border/80 shadow-2xl",
                             className
                         )}
-                        style={{ width: width } as React.CSSProperties}
+                        style={{ width: sidebarWidth } as React.CSSProperties}
                         {...props}
                     >
                         {children}
@@ -87,7 +86,7 @@ const SidebarRoot: React.FC<SidebarProps> = ({
                 <div
                     data-slot="sidebar"
                     style={{
-                        width: width,
+                        width: sidebarWidth,
                     } as React.CSSProperties}
                     className={cn(
                         "bg-background flex h-full flex-col",
@@ -111,7 +110,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         <div
             data-slot="sidebar-content"
             className={cn(
-                "flex flex-1 flex-col overflow-y-auto p-2 items-center overflow-hidden",
+                "flex w-full flex-1 flex-col overflow-y-auto p-2 items-center overflow-hidden",
                 className
             )}
             {...props}
@@ -191,7 +190,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
             data-slot="sidebar-item"
             data-active={active}
             className={cn(
-                "hover:bg-accent hover:text-accent-foreground flex items-center gap-2 rounded-md p-2 text-sm transition-colors cursor-pointer ",
+                "hover:bg-accent hover:text-accent-foreground flex w-full items-center gap-2 rounded-md p-2 text-sm transition-colors cursor-pointer ",
                 active && "bg-accent text-accent-foreground font-medium ",
                 className
             )}

@@ -1,5 +1,4 @@
 import { QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { client } from "@/shared/services"
 import { Toaster } from "sonner"
 import { ThemeProvider } from "@/shared/components"
@@ -18,7 +17,6 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
                 </AlertProvider>
                 <Toaster position="bottom-right" expand closeButton />
             </ThemeProvider>
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
     )
 }
