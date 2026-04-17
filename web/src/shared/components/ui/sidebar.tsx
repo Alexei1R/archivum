@@ -21,6 +21,16 @@ type SidebarItemProps = React.ComponentProps<"div"> & {
     asChild?: boolean;
 };
 
+interface SidebarContextValue {
+    closeMobileSidebar: () => void;
+}
+
+const SidebarContext = React.createContext<SidebarContextValue>({
+    closeMobileSidebar: () => undefined,
+});
+
+const useSidebar = () => React.useContext(SidebarContext);
+
 const insertVariants = cva(
     "flex flex-1 flex-col",
     {
@@ -49,11 +59,18 @@ const SidebarRoot: React.FC<SidebarProps> = ({
 }) => {
     const isMobile = useIsMobile()
     const sidebarWidth = isMobile ? "75vw" : width;
+    const [open, setOpen] = React.useState(false);
+    const contextValue = React.useMemo<SidebarContextValue>(
+        () => ({
+            closeMobileSidebar: () => setOpen(false),
+        }),
+        []
+    );
 
     return (
-        <>
+        <SidebarContext.Provider value={contextValue}>
             {isMobile ? (
-                <Sheet>
+                <Sheet open={open} onOpenChange={setOpen}>
                     <Sheet.Trigger asChild>
                         <Button
                             variant="ghost"
@@ -97,7 +114,7 @@ const SidebarRoot: React.FC<SidebarProps> = ({
                     {children}
                 </div>
             )}
-        </>
+        </SidebarContext.Provider>
     );
 };
 
@@ -237,4 +254,4 @@ const Sidebar: React.FC<SidebarProps> & {
     Inset: SidebarInset,
 });
 
-export { Sidebar };
+export { Sidebar, useSidebar };

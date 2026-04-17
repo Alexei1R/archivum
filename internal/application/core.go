@@ -16,17 +16,14 @@ import (
 	eventsSvc "fuse/internal/services/events"
 	"fuse/internal/services/mail"
 	svcNotification "fuse/internal/services/notification"
-	svcWorkspace "fuse/internal/services/workspace"
 
 	"fuse/internal/interfaces/server"
 	authH "fuse/internal/interfaces/server/auth"
 	healthH "fuse/internal/interfaces/server/health"
 	mailH "fuse/internal/interfaces/server/mail"
 	authMW "fuse/internal/interfaces/server/middleware"
-	wsH "fuse/internal/interfaces/server/workspace"
 
 	"fuse/internal/domain/user"
-	"fuse/internal/domain/workspace"
 )
 
 type Application struct {
@@ -42,12 +39,10 @@ type Application struct {
 	sessMgr  *session.Manager
 
 	// Repositories
-	userRepo      user.Repository
-	workspaceRepo workspace.Repository
+	userRepo user.Repository
 
 	// Services
 	authSvc         *auth.Service
-	workspaceSvc    *svcWorkspace.Service
 	mailSvc         *mail.Service
 	notificationSvc *svcNotification.Service
 
@@ -55,10 +50,9 @@ type Application struct {
 	authMW *authMW.AuthMiddleware
 
 	// Handlers
-	healthHandler    *healthH.Handler
-	authHandler      *authH.Handler
-	workspaceHandler *wsH.Handler
-	mailHandler      *mailH.Handler
+	healthHandler *healthH.Handler
+	authHandler   *authH.Handler
+	mailHandler   *mailH.Handler
 }
 
 func NewApplication() (*Application, error) {

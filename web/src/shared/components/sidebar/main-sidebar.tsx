@@ -1,6 +1,5 @@
 import { Sidebar } from "@/shared/components/ui/sidebar";
 import { Button } from "@/shared/components/ui/button";
-import { Sheet } from "@/shared/components/ui/sheet";
 import { CalendarDays, Home, Landmark, LogOut, Map, RouteIcon, Shield } from "lucide-react";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import { useAuthActions, useAuthStore } from "@/features/auth";
 import { Avatar } from "@/shared/components/ui/avatar";
 import { getInitials } from "@/shared/utils";
 import { cn } from "@/shared/utils";
+import { useSidebar } from "@/shared/components/ui/sidebar";
 
 interface Route {
     name: string;
@@ -30,6 +30,7 @@ const MainSidebar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
+    const { closeMobileSidebar } = useSidebar();
     const { logout, isLoggingOut } = useAuthActions();
     const user = useAuthStore(state => state.user) || {
         avatar: "https://github.com/shadcn.png",
@@ -57,28 +58,23 @@ const MainSidebar = () => {
             <div className={isMobile ? "flex w-full flex-col gap-3" : undefined}>
                 {routes.map((route) => {
                     const isActive = location.pathname === route.path;
-                    const routeButton = (
-                        <Button
-                            variant={isMobile ? "ghost" : isActive ? "secondary" : "ghost"}
-                            onClick={() => navigate(route.path)}
-                            size={isMobile ? "sm" : "icon"}
-                            className={isMobile ? cn(
-                                "relative h-10 w-full justify-start gap-3 px-3 text-sm",
-                                isActive && "after:absolute after:bottom-0 after:left-3 after:h-px after:w-4 after:rounded-full after:bg-brand"
-                            ) : undefined}
-                        >
-                            {route.icon}
-                            {isMobile && <span>{route.name}</span>}
-                        </Button>
-                    );
-
                     return (
                         <Sidebar.Item key={route.name} asChild>
-                            {isMobile ? (
-                                <Sheet.Close asChild>
-                                    {routeButton}
-                                </Sheet.Close>
-                            ) : routeButton}
+                            <Button
+                                variant={isMobile ? "ghost" : isActive ? "secondary" : "ghost"}
+                                onClick={() => {
+                                    navigate(route.path);
+                                    if (isMobile) closeMobileSidebar();
+                                }}
+                                size={isMobile ? "sm" : "icon"}
+                                className={isMobile ? cn(
+                                    "relative h-10 w-full justify-start gap-3 px-3 text-sm",
+                                    isActive && "after:absolute after:bottom-0 after:left-3 after:h-px after:w-4 after:rounded-full after:bg-brand"
+                                ) : undefined}
+                            >
+                                {route.icon}
+                                {isMobile && <span>{route.name}</span>}
+                            </Button>
                         </Sidebar.Item>
                     );
                 })}

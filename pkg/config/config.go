@@ -85,17 +85,6 @@ func loadConfig() error {
 }
 
 func setupViper() error {
-	if configFile := os.Getenv("CONFIG_FILE"); configFile != "" {
-		viper.SetConfigFile(configFile)
-		if err := viper.ReadInConfig(); err != nil {
-			return fmt.Errorf("failed to read config file %q: %w", configFile, err)
-		}
-
-		viper.AutomaticEnv()
-		viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-		return nil
-	}
-
 	configNames := []string{"config", "dev", "development", "prod", "production"}
 	configPaths := []string{".", "./configs", "./config", "./configurations"}
 

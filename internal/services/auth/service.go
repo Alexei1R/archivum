@@ -7,7 +7,6 @@ import (
 	"fuse/internal/domain/user"
 	"fuse/internal/infrastructure/events"
 	sessions "fuse/internal/infrastructure/session"
-	svcWorkspace "fuse/internal/services/workspace"
 	"fuse/pkg/log"
 
 	"github.com/google/uuid"
@@ -17,15 +16,13 @@ import (
 type Service struct {
 	userRepo       user.Repository
 	sessionManager *sessions.Manager
-	wsService      *svcWorkspace.Service
 	eventBus       events.EventBus
 }
 
-func NewService(userRepo user.Repository, sessionManager *sessions.Manager, wsService *svcWorkspace.Service, eventBus events.EventBus) *Service {
+func NewService(userRepo user.Repository, sessionManager *sessions.Manager, eventBus events.EventBus) *Service {
 	return &Service{
 		userRepo:       userRepo,
 		sessionManager: sessionManager,
-		wsService:      wsService,
 		eventBus:       eventBus,
 	}
 }
@@ -37,6 +34,7 @@ func (s *Service) HandleOAuthCallback(ctx context.Context, gothUser goth.User) (
 	}
 
 	var usr *user.User
+	var isNewUser bool
 
 	if existingUser == nil {
 		log.Info("Creating new user for email: %s", gothUser.Email)
@@ -48,6 +46,7 @@ func (s *Service) HandleOAuthCallback(ctx context.Context, gothUser goth.User) (
 		if err := s.userRepo.Create(ctx, usr); err != nil {
 			return nil, "", err
 		}
+		isNewUser = true
 	} else {
 		usr = existingUser
 	}
@@ -64,12 +63,11 @@ func (s *Service) HandleOAuthCallback(ctx context.Context, gothUser goth.User) (
 		return nil, "", ErrAuthFailed.WithErr(err)
 	}
 
-	if _, err := s.wsService.CreateWorkspace(ctx, "personal", usr.ID); err != nil {
-		log.Info("failed to create default workspace for user %s: %v", usr.ID, err)
-		return nil, "", err
+	if isNewUser {
+		if err := s.eventBus.Publish(ctx, user.NewAccountCreated(usr.Name, usr.Email)); err != nil {
+			return nil, "", ErrAuthFailed.WithErr(err)
+		}
 	}
-
-	s.eventBus.Publish(ctx, user.NewAccountCreated(usr.Name, usr.Email))
 
 	return usr, sessionID, nil
 }

@@ -39,10 +39,10 @@ func (s *Service) Setup() error {
 		func(ctx context.Context, event events.Event) error {
 			payload, ok := event.Payload().(user.AccountCreated)
 			if !ok {
-				return fmt.Errorf("invalid payload for workspace created event")
+				return fmt.Errorf("invalid payload for account created event")
 			}
 
-			log.Info("Received workspace created event, sending email...")
+			log.Info("Received account created event, sending email...")
 			log.Info("Payload: %+v", payload)
 
 			return s.SendAccountCreatedMail(
@@ -94,48 +94,6 @@ func (s *Service) SendAccountCreatedMail(to []string, username string) error {
 	}
 
 	return sendEmail(s.from, s.password, to, "Cont creat cu succes!", htmlContent)
-}
-
-func (s *Service) SendWorkspaceCreatedMail(to []string, workspace string) error {
-	h := hermes.Hermes{
-		Product: hermes.Product{
-			Name:      "Fuse",
-			Link:      "https://www.fuse.com/",
-			Copyright: "© 2025 Fuse. Toate drepturile rezervate.",
-		},
-		Theme: new(hermes.Default),
-	}
-
-	email := hermes.Email{
-		Body: hermes.Body{
-			Name: s.name,
-			Intros: []string{
-				fmt.Sprintf("Workspace-ul **%s** a fost creat cu succes!", workspace),
-			},
-			Actions: []hermes.Action{
-				{
-					Instructions: "Pentru a accesa noul workspace, apasă butonul de mai jos:",
-					Button: hermes.Button{
-						Color: "#22C55E",
-						Text:  "Accesează Workspace-ul",
-						Link:  "https://www.fuse.com/",
-					},
-				},
-			},
-			Outros: []string{
-				"Acum poți începe să inviti membri și să gestionezi proiectele tale.",
-				"Pentru suport: support@fuse.app",
-			},
-			Signature: "Echipa Fuse",
-		},
-	}
-
-	htmlContent, err := h.GenerateHTML(email)
-	if err != nil {
-		return fmt.Errorf("failed to generate workspace creation email: %w", err)
-	}
-
-	return sendEmail(s.from, s.password, to, "Workspace creat cu succes!", htmlContent)
 }
 
 func (s *Service) SendIssueMail(to []string, subject, message string) error {

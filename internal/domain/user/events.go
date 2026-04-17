@@ -6,7 +6,6 @@ const (
 	AccountCreatedEvent = "account.created"
 )
 
-// Workspace created event
 type AccountCreated struct {
 	UserName  string
 	UserEmail string
