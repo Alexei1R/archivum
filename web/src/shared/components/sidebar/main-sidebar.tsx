@@ -1,6 +1,6 @@
 import { Sidebar } from "@/shared/components/ui/sidebar";
 import { Button } from "@/shared/components/ui/button";
-import { CalendarDays, Home, Landmark, LogOut, Map, RouteIcon, Shield } from "lucide-react";
+import { CalendarDays, LogOut, Map, Shield } from "lucide-react";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/shared/constants";
@@ -18,11 +18,8 @@ interface Route {
 }
 
 const routes: Route[] = [
-    { name: "Home", path: ROUTES.HOME, icon: <Home size={16} /> },
-    { name: "Museums", path: ROUTES.MUSEUMS, icon: <Landmark size={16} /> },
     { name: "Map", path: ROUTES.MAP, icon: <Map size={16} /> },
     { name: "Events", path: ROUTES.EVENTS, icon: <CalendarDays size={16} /> },
-    { name: "Routes", path: ROUTES.ROUTES, icon: <RouteIcon size={16} /> },
     { name: "Admin", path: ROUTES.ADMIN, icon: <Shield size={16} /> },
 ];
 

@@ -16,11 +16,7 @@ export const router = createBrowserRouter([
                         children: [
                             {
                                 index: true,
-                                lazy: () => import("@/features/home/home.page"),
-                            },
-                            {
-                                path: ROUTES.MUSEUMS,
-                                lazy: () => import("@/features/museums/museums.page"),
+                                lazy: () => import("@/features/map/map.page"),
                             },
                             {
                                 path: ROUTES.MAP,
@@ -29,10 +25,6 @@ export const router = createBrowserRouter([
                             {
                                 path: ROUTES.EVENTS,
                                 lazy: () => import("@/features/events/events.page"),
-                            },
-                            {
-                                path: ROUTES.ROUTES,
-                                lazy: () => import("@/features/routes/routes.page"),
                             },
                             {
                                 path: ROUTES.ADMIN,
@@ -48,7 +40,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "*",
-                element: <Navigate to={ROUTES.HOME} replace />,
+                element: <Navigate to={ROUTES.MAP} replace />,
             },
         ],
     },

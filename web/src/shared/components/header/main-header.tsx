@@ -17,7 +17,7 @@ const MainHeader: React.FC = () => {
                 <Header.Logo
                     title="fuse"
                     onClick={() => {
-                        navigate(ROUTES.ROUTES);
+                        navigate(ROUTES.MAP);
                     }} />
 
                 <Header.Group className="ml-4">

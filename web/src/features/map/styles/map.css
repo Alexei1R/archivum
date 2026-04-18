@@ -1,0 +1,173 @@
+.map-page {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.map-view {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--background);
+  --map-surface: rgb(252, 252, 252);
+  --map-text: rgb(37, 37, 37);
+  --map-muted-text: rgb(96, 96, 96);
+  --map-cluster: rgb(42, 196, 139);
+  --map-poi-museum: rgb(56, 132, 224);
+  --map-poi-gallery: rgb(42, 178, 121);
+  --map-poi-artwork: rgb(220, 157, 42);
+  --map-poi-arts: rgb(215, 86, 74);
+  --map-poi-cathedral: rgb(143, 105, 218);
+  --map-poi-church: rgb(92, 142, 190);
+  --map-poi-worship: rgb(117, 117, 117);
+  --map-poi-shadow: rgb(0 0 0 / 36%);
+}
+
+.dark .map-view {
+  --map-surface: rgb(30, 30, 30);
+  --map-text: rgb(245, 245, 245);
+  --map-muted-text: rgb(178, 178, 178);
+  --map-cluster: rgb(65, 220, 160);
+}
+
+.map-view__canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.map-view__status {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 2;
+  max-width: min(22rem, calc(100% - 2rem));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklch, var(--background) 88%, transparent);
+  color: var(--foreground);
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  box-shadow: 0 1rem 2rem color-mix(in oklch, var(--foreground) 12%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.map-view__status--error {
+  border-color: var(--destructive);
+  color: var(--destructive);
+}
+
+.map-view__status--secondary {
+  top: 4rem;
+}
+
+.map-view__legend {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 2;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklch, var(--background) 88%, transparent);
+  color: var(--map-muted-text);
+  padding: 0.5rem 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  backdrop-filter: blur(12px);
+}
+
+.map-view .maplibregl-ctrl-group {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+  box-shadow: none;
+}
+
+.map-view .maplibregl-ctrl-group button {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.map-view .maplibregl-ctrl-group button:hover {
+  background-color: var(--accent);
+}
+
+.map-view .maplibregl-ctrl button .maplibregl-ctrl-icon {
+  filter: var(--map-control-icon-filter, none);
+}
+
+.dark .map-view .maplibregl-ctrl button .maplibregl-ctrl-icon {
+  --map-control-icon-filter: invert(1);
+}
+
+.map-view .maplibregl-ctrl-scale {
+  border-color: var(--border);
+  background: color-mix(in oklch, var(--background) 82%, transparent);
+  color: var(--foreground);
+}
+
+.map-view .maplibregl-ctrl-attrib {
+  border-top-left-radius: var(--radius-sm);
+  background: color-mix(in oklch, var(--background) 88%, transparent);
+  color: var(--muted-foreground);
+}
+
+.map-view .maplibregl-ctrl-attrib a {
+  color: var(--brand-primary);
+}
+
+.map-view .maplibregl-popup-content {
+  min-width: 12rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0;
+  box-shadow: 0 1rem 2rem color-mix(in oklch, var(--foreground) 14%, transparent);
+}
+
+.map-view .maplibregl-popup-tip {
+  border-top-color: var(--background);
+  border-bottom-color: var(--background);
+}
+
+.map-poi-popup {
+  padding: 0.75rem;
+}
+
+.map-poi-popup__title {
+  margin: 0;
+  color: var(--map-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+.map-poi-popup__meta {
+  margin: 0.25rem 0 0;
+  color: var(--map-muted-text);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+@media (max-width: 767px) {
+  .map-view__status {
+    bottom: 1rem;
+    top: auto;
+  }
+
+  .map-view__status--secondary {
+    bottom: 4rem;
+  }
+
+  .map-view__legend {
+    bottom: 4.75rem;
+  }
+}

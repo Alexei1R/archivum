@@ -5,6 +5,8 @@ interface Environment {
     readonly API_TIMEOUT?: number;
     readonly NODE_ENV: NodeEnv;
     readonly APPLICATION_NAME?: string;
+    readonly MAPTILER_KEY?: string;
+    readonly EVENTBRITE_TOKEN?: string;
 }
 
 const createEnv = (): Environment => {
@@ -14,12 +16,16 @@ const createEnv = (): Environment => {
         ? parseInt(import.meta.env.VITE_API_TIMEOUT, 10)
         : undefined;
     const applicationName = import.meta.env.VITE_APPLICATION_NAME || "Fuse";
+    const maptilerKey = import.meta.env.VITE_MAPTILER_KEY;
+    const eventbriteToken = import.meta.env.VITE_EVENTBRITE_TOKEN;
 
     return {
         API_URL: apiUrl,
         NODE_ENV: nodeEnv,
         API_TIMEOUT: apiTimeout,
         APPLICATION_NAME: applicationName,
+        MAPTILER_KEY: maptilerKey,
+        EVENTBRITE_TOKEN: eventbriteToken,
     } as const;
 };
 

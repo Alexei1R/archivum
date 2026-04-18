@@ -1,1 +1,8 @@
-export type { Events } from "./events.types";
+export type {
+  EventLocation,
+  EventCategory,
+  EventsPage,
+  EventsQuery,
+  EventItem,
+  EventItemWithDistance,
+} from "./events.types";
