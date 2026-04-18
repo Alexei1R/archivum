@@ -7,6 +7,9 @@ import { AuthProtected } from "@/features/auth/protected";
 export const router = createBrowserRouter([
     {
         errorElement: <ErrorBoundary />,
+        hydrateFallbackElement: (
+            <div className="p-4 text-sm text-muted-foreground">Loading...</div>
+        ),
         children: [
             {
                 element: <AuthProtected />,

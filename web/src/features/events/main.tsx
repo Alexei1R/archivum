@@ -19,6 +19,7 @@ const Main = () => {
   const isMobile = useIsMobile();
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [mobileDetailsOpen, setMobileDetailsOpen] = useState(false);
+  const hasEvents = events.length > 0;
   const selectedEvent = useMemo(
     () => events.find((event) => event.id === selectedEventId) || events[0] || null,
     [events, selectedEventId],
@@ -47,7 +48,7 @@ const Main = () => {
               {error}
             </div>
           )}
-          {!isLoading && !error && (
+          {!isLoading && !error && hasEvents && (
             <EventsList
               events={events}
               hasNextPage={Boolean(hasNextPage)}
@@ -60,6 +61,11 @@ const Main = () => {
               onToggleLike={toggleLike}
               selectedEventId={selectedEvent?.id}
             />
+          )}
+          {!isLoading && !error && !hasEvents && (
+            <div className="rounded-xl border p-6 text-sm text-muted-foreground">
+              No events available for this Eventbrite account yet. Create or publish events in your Eventbrite organization and refresh.
+            </div>
           )}
         </section>
 
