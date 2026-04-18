@@ -13,16 +13,19 @@ import (
 	"fuse/internal/infrastructure/session"
 
 	"fuse/internal/services/auth"
+	eventCatalogSvc "fuse/internal/services/eventcatalog"
 	eventsSvc "fuse/internal/services/events"
 	"fuse/internal/services/mail"
 	svcNotification "fuse/internal/services/notification"
 
 	"fuse/internal/interfaces/server"
 	authH "fuse/internal/interfaces/server/auth"
+	eventCatalogH "fuse/internal/interfaces/server/events"
 	healthH "fuse/internal/interfaces/server/health"
 	mailH "fuse/internal/interfaces/server/mail"
 	authMW "fuse/internal/interfaces/server/middleware"
 
+	"fuse/internal/domain/eventcatalog"
 	"fuse/internal/domain/user"
 )
 
@@ -39,10 +42,13 @@ type Application struct {
 	sessMgr  *session.Manager
 
 	// Repositories
-	userRepo user.Repository
+	userRepo  user.Repository
+	eventRepo eventcatalog.Repository
 
 	// Services
 	authSvc         *auth.Service
+	eventCatalogSvc *eventCatalogSvc.Service
+	eventScheduler  *eventCatalogSvc.Scheduler
 	mailSvc         *mail.Service
 	notificationSvc *svcNotification.Service
 
@@ -52,6 +58,7 @@ type Application struct {
 	// Handlers
 	healthHandler *healthH.Handler
 	authHandler   *authH.Handler
+	eventHandler  *eventCatalogH.Handler
 	mailHandler   *mailH.Handler
 }
 

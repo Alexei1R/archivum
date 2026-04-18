@@ -7,3 +7,7 @@ export type {
   OsmOverpassResponse,
   OsmPoiElement,
 } from "./map.types";
+export type {
+  RoutePlanStop,
+  RoutePlanStopKind,
+} from "./route-plan.types";

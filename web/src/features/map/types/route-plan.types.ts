@@ -1,0 +1,10 @@
+export type RoutePlanStopKind = "event" | "place";
+
+export interface RoutePlanStop {
+  address: string;
+  id: string;
+  kind: RoutePlanStopKind;
+  latitude: number;
+  longitude: number;
+  title: string;
+}

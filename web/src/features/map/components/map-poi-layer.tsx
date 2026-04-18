@@ -13,11 +13,13 @@ import {
   MAP_POI_SOURCE_ID,
 } from "../constants";
 import { mapService } from "../services";
-import type { MapPoiFeatureCollection, MapPoiProperties } from "../types";
+import type { MapPoiFeatureCollection, MapPoiProperties, RoutePlanStop } from "../types";
 
 interface MapPoiLayerProps {
   isReady: boolean;
   map: Map | null;
+  plannedStopIds: string[];
+  onToggleStop: (stop: RoutePlanStop) => void;
 }
 
 const emptyPlaces: MapPoiFeatureCollection = {
@@ -71,7 +73,10 @@ const getCategoryColorExpression = (element: Element) => {
   return expression;
 };
 
-const createPopupContent = (properties: MapPoiProperties) => {
+const getPoiStopId = (properties: MapPoiProperties) =>
+  `place:${properties.id}`;
+
+const createPopupContent = (properties: MapPoiProperties, isSelected: boolean) => {
   const root = document.createElement("div");
   root.className = "map-poi-popup";
 
@@ -84,6 +89,11 @@ const createPopupContent = (properties: MapPoiProperties) => {
   meta.className = "map-poi-popup__meta";
   meta.textContent = properties.address || properties.kind;
   root.append(meta);
+
+  const plan = document.createElement("p");
+  plan.className = "map-event-popup__plan";
+  plan.textContent = isSelected ? "Added to route plan" : "Click this place to add it to the route plan";
+  root.append(plan);
 
   return root;
 };
@@ -114,7 +124,11 @@ const removePoiLayers = (map: Map) => {
   }
 };
 
-const addPoiLayers = (map: Map, places: MapPoiFeatureCollection) => {
+const addPoiLayers = (
+  map: Map,
+  places: MapPoiFeatureCollection,
+  plannedStopIds: string[],
+) => {
   if (!canUseMapStyle(map)) return;
 
   removePoiLayers(map);
@@ -167,7 +181,11 @@ const addPoiLayers = (map: Map, places: MapPoiFeatureCollection) => {
     id: MAP_POI_LAYERS.markerShadow,
     type: "circle",
     source: MAP_POI_SOURCE_ID,
-    filter: ["!", ["has", "point_count"]],
+    filter: [
+      "all",
+      ["!", ["has", "point_count"]],
+      ["!", ["in", ["concat", "place:", ["get", "id"]], ["literal", plannedStopIds]]],
+    ],
     paint: {
       "circle-color": shadowColor,
       "circle-radius": 14,
@@ -180,12 +198,50 @@ const addPoiLayers = (map: Map, places: MapPoiFeatureCollection) => {
     id: MAP_POI_LAYERS.markers,
     type: "circle",
     source: MAP_POI_SOURCE_ID,
-    filter: ["!", ["has", "point_count"]],
+    filter: [
+      "all",
+      ["!", ["has", "point_count"]],
+      ["!", ["in", ["concat", "place:", ["get", "id"]], ["literal", plannedStopIds]]],
+    ],
     paint: {
       "circle-color": markerColor as never,
       "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 5, 14, 8, 17, 11],
       "circle-stroke-color": surfaceColor,
       "circle-stroke-width": 2,
+    },
+  });
+
+  map.addLayer({
+    id: MAP_POI_LAYERS.selectedMarkerShadow,
+    type: "circle",
+    source: MAP_POI_SOURCE_ID,
+    filter: [
+      "all",
+      ["!", ["has", "point_count"]],
+      ["in", ["concat", "place:", ["get", "id"]], ["literal", plannedStopIds]],
+    ],
+    paint: {
+      "circle-color": shadowColor,
+      "circle-radius": 20,
+      "circle-blur": 0.9,
+      "circle-translate": [0, 4],
+    },
+  });
+
+  map.addLayer({
+    id: MAP_POI_LAYERS.selectedMarkers,
+    type: "circle",
+    source: MAP_POI_SOURCE_ID,
+    filter: [
+      "all",
+      ["!", ["has", "point_count"]],
+      ["in", ["concat", "place:", ["get", "id"]], ["literal", plannedStopIds]],
+    ],
+    paint: {
+      "circle-color": getCssValue(mapRoot, "--map-event-star") || "rgb(0, 215, 128)",
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 8, 14, 12, 17, 16],
+      "circle-stroke-color": surfaceColor,
+      "circle-stroke-width": 3,
     },
   });
 
@@ -211,7 +267,12 @@ const addPoiLayers = (map: Map, places: MapPoiFeatureCollection) => {
   });
 };
 
-const MapPoiLayer = ({ isReady, map }: MapPoiLayerProps) => {
+const MapPoiLayer = ({
+  isReady,
+  map,
+  onToggleStop,
+  plannedStopIds,
+}: MapPoiLayerProps) => {
   const [places, setPlaces] = useState<MapPoiFeatureCollection>(emptyPlaces);
   const [requestedCenter, setRequestedCenter] = useState<[number, number] | null>(null);
   const [lastFetchedCenter, setLastFetchedCenter] = useState<[number, number] | null>(null);
@@ -330,7 +391,7 @@ const MapPoiLayer = ({ isReady, map }: MapPoiLayerProps) => {
     if (!map || !isReady) return;
     if (!canUseMapStyle(map)) return;
 
-    addPoiLayers(map, places);
+    addPoiLayers(map, places, plannedStopIds);
 
     const handleMarkerClick = (event: MapLayerMouseEvent) => {
       const feature = event.features?.[0];
@@ -340,14 +401,43 @@ const MapPoiLayer = ({ isReady, map }: MapPoiLayerProps) => {
 
       if (!feature?.properties || !coordinates) return;
 
+      const properties = feature.properties as MapPoiProperties;
+      const stopId = getPoiStopId(properties);
+      onToggleStop({
+        address: properties.address || properties.kind,
+        id: stopId,
+        kind: "place",
+        latitude: (coordinates as [number, number])[1],
+        longitude: (coordinates as [number, number])[0],
+        title: properties.name,
+      });
+
       new Popup({
         closeButton: false,
         closeOnMove: true,
         offset: 14,
       })
         .setLngLat(coordinates as [number, number])
-        .setDOMContent(createPopupContent(feature.properties as MapPoiProperties))
+        .setDOMContent(createPopupContent(properties, !plannedStopIds.includes(stopId)))
         .addTo(map);
+    };
+
+    const handleClusterClick = (event: MapLayerMouseEvent) => {
+      const feature = event.features?.[0];
+      const clusterId = feature?.properties?.cluster_id as number | undefined;
+      const source = map.getSource(MAP_POI_SOURCE_ID) as GeoJSONSource | undefined;
+      const coordinates = feature?.geometry.type === "Point"
+        ? feature.geometry.coordinates
+        : null;
+
+      if (!source || clusterId === undefined || !coordinates) return;
+
+      void source.getClusterExpansionZoom(clusterId).then((zoom) => {
+        map.easeTo({
+          center: coordinates as [number, number],
+          zoom,
+        });
+      });
     };
 
     const handleMouseEnter = () => {
@@ -359,21 +449,39 @@ const MapPoiLayer = ({ isReady, map }: MapPoiLayerProps) => {
     };
 
     map.on("click", MAP_POI_LAYERS.markers, handleMarkerClick);
+    map.on("click", MAP_POI_LAYERS.selectedMarkers, handleMarkerClick);
+    map.on("click", MAP_POI_LAYERS.labels, handleMarkerClick);
+    map.on("click", MAP_POI_LAYERS.clusters, handleClusterClick);
     map.on("mouseenter", MAP_POI_LAYERS.markers, handleMouseEnter);
+    map.on("mouseenter", MAP_POI_LAYERS.selectedMarkers, handleMouseEnter);
+    map.on("mouseenter", MAP_POI_LAYERS.labels, handleMouseEnter);
+    map.on("mouseenter", MAP_POI_LAYERS.clusters, handleMouseEnter);
     map.on("mouseleave", MAP_POI_LAYERS.markers, handleMouseLeave);
+    map.on("mouseleave", MAP_POI_LAYERS.selectedMarkers, handleMouseLeave);
+    map.on("mouseleave", MAP_POI_LAYERS.labels, handleMouseLeave);
+    map.on("mouseleave", MAP_POI_LAYERS.clusters, handleMouseLeave);
 
     return () => {
       try {
         map.off("click", MAP_POI_LAYERS.markers, handleMarkerClick);
+        map.off("click", MAP_POI_LAYERS.selectedMarkers, handleMarkerClick);
+        map.off("click", MAP_POI_LAYERS.labels, handleMarkerClick);
+        map.off("click", MAP_POI_LAYERS.clusters, handleClusterClick);
         map.off("mouseenter", MAP_POI_LAYERS.markers, handleMouseEnter);
+        map.off("mouseenter", MAP_POI_LAYERS.selectedMarkers, handleMouseEnter);
+        map.off("mouseenter", MAP_POI_LAYERS.labels, handleMouseEnter);
+        map.off("mouseenter", MAP_POI_LAYERS.clusters, handleMouseEnter);
         map.off("mouseleave", MAP_POI_LAYERS.markers, handleMouseLeave);
+        map.off("mouseleave", MAP_POI_LAYERS.selectedMarkers, handleMouseLeave);
+        map.off("mouseleave", MAP_POI_LAYERS.labels, handleMouseLeave);
+        map.off("mouseleave", MAP_POI_LAYERS.clusters, handleMouseLeave);
       } catch {
         // MapLibre may already be tearing down during route changes.
       }
 
       if (canUseMapStyle(map)) removePoiLayers(map);
     };
-  }, [isReady, map, places]);
+  }, [isReady, map, onToggleStop, places, plannedStopIds]);
 
   useEffect(() => {
     if (!map || !isReady) return;

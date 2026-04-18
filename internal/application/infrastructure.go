@@ -9,6 +9,7 @@ import (
 	"fuse/internal/infrastructure/session"
 	"fuse/pkg/log"
 
+	eventM "fuse/internal/domain/eventcatalog/models"
 	userM "fuse/internal/domain/user/models"
 
 	eventsSvc "fuse/internal/services/events"
@@ -23,6 +24,8 @@ func (a *Application) setupDatabase() error {
 	if a.cfg.Database.Migrate {
 		if err := db.Migrate(
 			&userM.DBUser{},
+			&eventM.DBEvent{},
+			&eventM.DBEventSync{},
 		); err != nil {
 			return fmt.Errorf("migration failed: %w", err)
 		}

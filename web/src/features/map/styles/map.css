@@ -27,6 +27,8 @@
   --map-poi-church: rgb(92, 142, 190);
   --map-poi-worship: rgb(117, 117, 117);
   --map-poi-shadow: rgb(0 0 0 / 36%);
+  --map-event-star: rgb(0, 215, 128);
+  --map-route-line: rgb(205, 132, 72);
 }
 
 .dark .map-view {
@@ -34,6 +36,8 @@
   --map-text: rgb(245, 245, 245);
   --map-muted-text: rgb(178, 178, 178);
   --map-cluster: rgb(65, 220, 160);
+  --map-event-star: rgb(75, 255, 180);
+  --map-route-line: rgb(230, 151, 82);
 }
 
 .map-view__canvas {
@@ -80,6 +84,37 @@
   font-size: 0.75rem;
   line-height: 1rem;
   backdrop-filter: blur(12px);
+}
+
+.map-view__legend--events {
+  display: grid;
+  gap: 0.15rem;
+  left: auto;
+  right: 1rem;
+}
+
+.map-view__legend--event-count {
+  left: 1rem;
+}
+
+.map-view__legend-action {
+  width: fit-content;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.25rem 0.4rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.map-view__legend-action:hover {
+  background: var(--accent);
+}
+
+.map-view__legend-error {
+  color: var(--destructive);
 }
 
 .map-view .maplibregl-ctrl-group {
@@ -157,6 +192,54 @@
   line-height: 1rem;
 }
 
+.map-event-popup {
+  max-width: 18rem;
+  padding: 0.75rem;
+}
+
+.map-event-popup__badge {
+  margin: 0 0 0.35rem;
+  color: var(--brand-primary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-transform: uppercase;
+}
+
+.map-event-popup__title {
+  margin: 0;
+  color: var(--map-text);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+}
+
+.map-event-popup__meta {
+  margin: 0.35rem 0 0;
+  color: var(--map-muted-text);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.map-event-popup__plan {
+  margin: 0.5rem 0 0;
+  color: var(--brand-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+}
+
+.map-event-popup__link {
+  display: inline-flex;
+  margin-top: 0.625rem;
+  color: var(--brand-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-decoration: underline;
+  text-underline-offset: 0.18rem;
+}
+
 @media (max-width: 767px) {
   .map-view__status {
     bottom: 1rem;
@@ -169,5 +252,15 @@
 
   .map-view__legend {
     bottom: 4.75rem;
+  }
+
+  .map-view__legend--events {
+    left: 1rem;
+    right: auto;
+    bottom: 7.75rem;
+  }
+
+  .map-view__legend--event-count {
+    bottom: 10.75rem;
   }
 }

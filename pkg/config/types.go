@@ -11,6 +11,7 @@ type Config struct {
 	Auth        AuthConfig     `mapstructure:"auth" validate:"required"`
 	Session     SessionConfig  `mapstructure:"session" validate:"required"`
 	Frontend    FrontendConfig `mapstructure:"frontend" validate:"required"`
+	Events      EventsConfig   `mapstructure:"events"`
 
 	Mail MailConfig `mapstructure:"mail" `
 }
@@ -23,6 +24,10 @@ type ServerConfig struct {
 
 type FrontendConfig struct {
 	URL string `mapstructure:"url" validate:"required,url"`
+}
+
+type EventsConfig struct {
+	RefreshIntervalSeconds int `mapstructure:"refresh_interval_seconds" validate:"min=0"`
 }
 
 type DatabaseConfig struct {

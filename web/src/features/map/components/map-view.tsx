@@ -1,5 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import maplibregl, { Map, NavigationControl, ScaleControl } from "maplibre-gl";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import maplibregl, {
+  type Map as MapLibreMap,
+  NavigationControl,
+  ScaleControl,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import { useTheme } from "@/shared/components";
@@ -10,7 +14,10 @@ import {
   type MapStyleTheme,
 } from "../constants";
 import { mapService } from "../services";
+import type { RoutePlanStop } from "../types";
+import MapEventsLayer from "./map-events-layer";
 import MapPoiLayer from "./map-poi-layer";
+import MapRoutePlanLayer from "./map-route-plan-layer";
 
 const getSystemMapTheme = (): MapStyleTheme =>
   window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -44,7 +51,7 @@ const getStoredCamera = () => {
   }
 };
 
-const storeCamera = (map: Map) => {
+const storeCamera = (map: MapLibreMap) => {
   const center = map.getCenter();
 
   try {
@@ -64,15 +71,47 @@ const storeCamera = (map: Map) => {
 
 const MapView = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<Map | null>(null);
-  const [mapInstance, setMapInstance] = useState<Map | null>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const [mapInstance, setMapInstance] = useState<MapLibreMap | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [manualPlanStops, setManualPlanStops] = useState<RoutePlanStop[]>([]);
+  const [likedPlanStops, setLikedPlanStops] = useState<RoutePlanStop[]>([]);
   const { theme } = useTheme();
   const [systemMapTheme, setSystemMapTheme] = useState<MapStyleTheme>(() =>
     typeof window === "undefined" ? "light" : getSystemMapTheme(),
   );
   const mapTheme: MapStyleTheme = theme === "system" ? systemMapTheme : theme;
+  const plannedStops = useMemo(() => {
+    const stops = new globalThis.Map<string, RoutePlanStop>();
+
+    likedPlanStops.forEach((stop) => stops.set(stop.id, stop));
+    manualPlanStops.forEach((stop) => stops.set(stop.id, stop));
+
+    return Array.from(stops.values());
+  }, [likedPlanStops, manualPlanStops]);
+  const plannedStopIds = useMemo(
+    () => plannedStops.map((stop) => stop.id),
+    [plannedStops],
+  );
+  const manualEventPlanIds = useMemo(
+    () => manualPlanStops
+      .filter((stop) => stop.kind === "event")
+      .map((stop) => stop.id.replace(/^event:/, "")),
+    [manualPlanStops],
+  );
+
+  const handleTogglePlanStop = useCallback((stop: RoutePlanStop) => {
+    setManualPlanStops((stops) => (
+      stops.some((existingStop) => existingStop.id === stop.id)
+        ? stops.filter((existingStop) => existingStop.id !== stop.id)
+        : [...stops, stop]
+    ));
+  }, []);
+
+  const handleClearManualPlanStops = useCallback(() => {
+    setManualPlanStops([]);
+  }, []);
 
   useEffect(() => {
     if (theme !== "system") return;
@@ -172,7 +211,26 @@ const MapView = () => {
     <section className="map-view" aria-label="City map">
       <div ref={containerRef} className="map-view__canvas" />
 
-      <MapPoiLayer isReady={isReady} map={mapInstance} />
+      <MapPoiLayer
+        isReady={isReady}
+        map={mapInstance}
+        onToggleStop={handleTogglePlanStop}
+        plannedStopIds={plannedStopIds}
+      />
+      <MapEventsLayer
+        isReady={isReady}
+        manualPlanIds={manualEventPlanIds}
+        map={mapInstance}
+        onToggleStop={handleTogglePlanStop}
+        onVisibleLikedStopsChange={setLikedPlanStops}
+      />
+      <MapRoutePlanLayer
+        isReady={isReady}
+        map={mapInstance}
+        onClearClickedStops={handleClearManualPlanStops}
+        plannedStopCount={manualPlanStops.length}
+        stops={plannedStops}
+      />
 
       {!isReady && !error && (
         <div className="map-view__status" role="status">
