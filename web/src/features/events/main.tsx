@@ -64,7 +64,7 @@ const Main = () => {
           )}
           {!isLoading && !error && !hasEvents && (
             <div className="rounded-xl border p-6 text-sm text-muted-foreground">
-              No events available for this Eventbrite account yet. Create or publish events in your Eventbrite organization and refresh.
+              No Moldova or Romania events were found from the configured sources yet.
             </div>
           )}
         </section>

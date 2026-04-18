@@ -20,5 +20,4 @@ export const EVENT_SEARCH_CITIES = [
   { name: "Ploiesti, Romania", latitude: 44.9367, longitude: 26.0129 },
   { name: "Oradea, Romania", latitude: 47.0465, longitude: 21.9189 },
   { name: "Sibiu, Romania", latitude: 45.7983, longitude: 24.1256 },
-  { name: "Paris, France", latitude: 48.8566, longitude: 2.3522 },
 ];

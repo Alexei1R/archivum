@@ -7,6 +7,8 @@ interface Environment {
     readonly APPLICATION_NAME?: string;
     readonly MAPTILER_KEY?: string;
     readonly EVENTBRITE_TOKEN?: string;
+    readonly TICKETMASTER_API_KEY?: string;
+    readonly SERPAPI_KEY?: string;
 }
 
 const createEnv = (): Environment => {
@@ -18,6 +20,8 @@ const createEnv = (): Environment => {
     const applicationName = import.meta.env.VITE_APPLICATION_NAME || "Fuse";
     const maptilerKey = import.meta.env.VITE_MAPTILER_KEY;
     const eventbriteToken = import.meta.env.VITE_EVENTBRITE_TOKEN;
+    const ticketmasterApiKey = import.meta.env.VITE_TICKETMASTER_API_KEY;
+    const serpApiKey = import.meta.env.VITE_SERPAPI_KEY;
 
     return {
         API_URL: apiUrl,
@@ -26,6 +30,8 @@ const createEnv = (): Environment => {
         APPLICATION_NAME: applicationName,
         MAPTILER_KEY: maptilerKey,
         EVENTBRITE_TOKEN: eventbriteToken,
+        TICKETMASTER_API_KEY: ticketmasterApiKey,
+        SERPAPI_KEY: serpApiKey,
     } as const;
 };
 

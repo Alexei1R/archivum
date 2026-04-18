@@ -7,7 +7,6 @@ import { eventsService } from "../services";
 import type { EventItemWithDistance, EventsPage, EventsQuery } from "../types";
 
 const EVENTS_PAGE_SIZE = 18;
-const GLOBAL_PAGE_START = 0;
 
 type EventsPageParam = {
   page: number;
@@ -19,7 +18,7 @@ type EventsQueryKey = ["events", EventsQuery["center"]];
 const useEvents = () => {
   const [query, setQuery] = useState<EventsQuery>({
     center: EVENTS_DEFAULT_CENTER,
-    scope: "nearby",
+    scope: "global",
   });
 
   useEffect(() => {
@@ -32,7 +31,7 @@ const useEvents = () => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           },
-          scope: "nearby",
+          scope: "global",
         });
       },
       () => undefined,
@@ -52,7 +51,7 @@ const useEvents = () => {
     EventsPageParam
   >({
     queryKey: ["events", query.center],
-    initialPageParam: { page: 0, scope: "nearby" },
+    initialPageParam: { page: 0, scope: "global" },
     queryFn: ({ pageParam }) =>
       eventsService.getEventsPage({
         ...query,
@@ -65,13 +64,6 @@ const useEvents = () => {
         return {
           page: lastPage.nextPage,
           scope: lastPage.scope,
-        };
-      }
-
-      if (lastPage.scope === "nearby") {
-        return {
-          page: GLOBAL_PAGE_START,
-          scope: "global" as const,
         };
       }
 
