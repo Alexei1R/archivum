@@ -21,8 +21,10 @@ import (
 )
 
 const (
-	sourceIabilet = "iaBilet"
-	sourceIticket = "iTicket"
+	coordinateQualityExact      = "exact"
+	coordinateQualityUnverified = "unverified"
+	sourceIabilet               = "iaBilet"
+	sourceIticket               = "iTicket"
 )
 
 var (
@@ -151,7 +153,19 @@ func (s *Service) List(ctx context.Context, query eventcatalog.Query) (eventcata
 		query.From = &now
 	}
 
-	return s.repo.List(ctx, query)
+	page, err := s.repo.List(ctx, query)
+	if err != nil {
+		return eventcatalog.Page{}, err
+	}
+
+	for index := range page.Events {
+		if page.Events[index].CoordinateQuality != coordinateQualityExact {
+			page.Events[index].Latitude = nil
+			page.Events[index].Longitude = nil
+		}
+	}
+
+	return page, nil
 }
 
 func (s *Service) Refresh(ctx context.Context) (eventcatalog.SyncStats, error) {
@@ -345,24 +359,23 @@ func (s *Service) buildEvent(source Source, title, rawText, dateText, href, imag
 	}
 
 	return eventcatalog.Event{
-		Source:      source.Name,
-		SourceID:    stableID(source.Name + ":" + sourceURL + ":" + title + ":" + startAt.Format("2006-01-02")),
-		SourceURL:   sourceURL,
-		Title:       title,
-		Description: description,
-		Category:    s.categoryFor(rawText + " " + title),
-		Country:     source.Country,
-		City:        location.City,
-		VenueName:   inferVenue(rawText, title),
-		Address:     location.City,
-		Latitude:    &location.Latitude,
-		Longitude:   &location.Longitude,
-		PriceLabel:  priceLabel,
-		ImageURL:    imageURL,
-		StartAt:     startAt,
-		LastSeenAt:  now,
-		RawText:     rawText,
-		Active:      true,
+		Source:            source.Name,
+		SourceID:          stableID(source.Name + ":" + sourceURL + ":" + title + ":" + startAt.Format("2006-01-02")),
+		SourceURL:         sourceURL,
+		Title:             title,
+		Description:       description,
+		Category:          s.categoryFor(rawText + " " + title),
+		Country:           source.Country,
+		City:              location.City,
+		VenueName:         inferVenue(rawText, title),
+		Address:           location.City,
+		CoordinateQuality: coordinateQualityUnverified,
+		PriceLabel:        priceLabel,
+		ImageURL:          imageURL,
+		StartAt:           startAt,
+		LastSeenAt:        now,
+		RawText:           rawText,
+		Active:            true,
 	}
 }
 
@@ -398,10 +411,8 @@ func inferLocation(text, country string) CityLocation {
 			return location
 		}
 	}
-	if country == "RO" {
-		return CityLocation{City: "București", Country: "RO", Latitude: 44.4268, Longitude: 26.1025}
-	}
-	return CityLocation{City: "Moldova", Country: "MD", Latitude: 47.0105, Longitude: 28.8323}
+
+	return CityLocation{Country: country}
 }
 
 func inferVenue(rawText, title string) string {

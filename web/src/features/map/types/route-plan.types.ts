@@ -1,4 +1,4 @@
-export type RoutePlanStopKind = "event" | "place";
+export type RoutePlanStopKind = "place";
 
 export interface RoutePlanStop {
   address: string;

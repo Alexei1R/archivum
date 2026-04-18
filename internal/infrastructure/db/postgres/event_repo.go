@@ -109,6 +109,7 @@ func (r *EventRepository) UpsertMany(ctx context.Context, events []eventcatalog.
 			"address",
 			"latitude",
 			"longitude",
+			"coordinate_quality",
 			"price_label",
 			"image_url",
 			"start_at",

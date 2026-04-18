@@ -7,6 +7,7 @@ type BackendEvent = {
   category: EventCategory;
   city?: string;
   country: string;
+  coordinate_quality?: string;
   description: string;
   end_at?: string;
   id: string;
@@ -32,10 +33,18 @@ const toRadians = (value: number) => value * (Math.PI / 180);
 
 const getDistanceMeters = (
   center: EventsQuery["center"],
+  coordinateQuality?: string,
   latitude?: number,
   longitude?: number,
 ) => {
-  if (!center || latitude === undefined || longitude === undefined) return 0;
+  if (
+    !center ||
+    coordinateQuality !== "exact" ||
+    latitude === undefined ||
+    longitude === undefined
+  ) {
+    return Number.NaN;
+  }
 
   const earthRadiusMeters = 6_371_000;
   const deltaLatitude = toRadians(latitude - center.latitude);
@@ -62,12 +71,18 @@ const toEventItem = (
 ): EventItemWithDistance => ({
   category: event.category || "other",
   description: event.description || "Open the source for event details.",
-  distanceMeters: getDistanceMeters(center, event.latitude, event.longitude),
+  distanceMeters: getDistanceMeters(
+    center,
+    event.coordinate_quality,
+    event.latitude,
+    event.longitude,
+  ),
   endDate: event.end_at,
   id: event.id,
   imageUrl: event.image_url,
   location: {
     address: event.address || event.city || event.country,
+    coordinateQuality: event.coordinate_quality,
     latitude: event.latitude ?? 0,
     longitude: event.longitude ?? 0,
     name: event.venue_name || event.city || event.country,

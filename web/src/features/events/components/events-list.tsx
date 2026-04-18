@@ -10,7 +10,7 @@ interface EventsListProps {
   isLoadingMore: boolean;
   onLoadMore: () => void;
   onSelect: (event: EventItemWithDistance) => void;
-  onToggleLike: (eventId: string) => void;
+  onToggleLike: (event: EventItemWithDistance) => void;
   selectedEventId?: string;
 }
 

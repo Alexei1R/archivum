@@ -9,7 +9,7 @@ const MainHeader: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <Header className="fixed bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] left-4 right-4 top-auto rounded-2xl border border-border/80 shadow-lg md:sticky md:left-auto md:right-auto md:top-0 md:bottom-auto md:rounded-none md:border-0 md:shadow-none">
+        <Header className="fixed bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] left-4 right-4 top-auto rounded-2xl border border-border/80 bg-background/85 shadow-lg backdrop-blur-md md:sticky md:left-auto md:right-auto md:top-0 md:bottom-auto md:rounded-none md:border-0 md:bg-background md:shadow-none md:backdrop-blur-none">
             <Header.Content
                 variant="default"
                 className="h-12 px-2.5 md:h-[2.5rem] md:px-1"

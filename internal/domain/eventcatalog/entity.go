@@ -26,28 +26,29 @@ const (
 )
 
 type Event struct {
-	ID          uuid.UUID  `json:"id"`
-	Source      string     `json:"source"`
-	SourceID    string     `json:"source_id"`
-	SourceURL   string     `json:"source_url,omitempty"`
-	Title       string     `json:"title"`
-	Description string     `json:"description"`
-	Category    Category   `json:"category"`
-	Country     string     `json:"country"`
-	City        string     `json:"city,omitempty"`
-	VenueName   string     `json:"venue_name,omitempty"`
-	Address     string     `json:"address,omitempty"`
-	Latitude    *float64   `json:"latitude,omitempty"`
-	Longitude   *float64   `json:"longitude,omitempty"`
-	PriceLabel  string     `json:"price_label"`
-	ImageURL    string     `json:"image_url,omitempty"`
-	StartAt     time.Time  `json:"start_at"`
-	EndAt       *time.Time `json:"end_at,omitempty"`
-	LastSeenAt  time.Time  `json:"last_seen_at"`
-	RawText     string     `json:"-"`
-	Active      bool       `json:"active"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   time.Time  `json:"updated_at"`
+	ID                uuid.UUID  `json:"id"`
+	Source            string     `json:"source"`
+	SourceID          string     `json:"source_id"`
+	SourceURL         string     `json:"source_url,omitempty"`
+	Title             string     `json:"title"`
+	Description       string     `json:"description"`
+	Category          Category   `json:"category"`
+	Country           string     `json:"country"`
+	City              string     `json:"city,omitempty"`
+	VenueName         string     `json:"venue_name,omitempty"`
+	Address           string     `json:"address,omitempty"`
+	Latitude          *float64   `json:"latitude,omitempty"`
+	Longitude         *float64   `json:"longitude,omitempty"`
+	CoordinateQuality string     `json:"coordinate_quality,omitempty"`
+	PriceLabel        string     `json:"price_label"`
+	ImageURL          string     `json:"image_url,omitempty"`
+	StartAt           time.Time  `json:"start_at"`
+	EndAt             *time.Time `json:"end_at,omitempty"`
+	LastSeenAt        time.Time  `json:"last_seen_at"`
+	RawText           string     `json:"-"`
+	Active            bool       `json:"active"`
+	CreatedAt         time.Time  `json:"created_at"`
+	UpdatedAt         time.Time  `json:"updated_at"`
 }
 
 type Query struct {

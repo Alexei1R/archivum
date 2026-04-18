@@ -4,6 +4,7 @@ import type { InfiniteData } from "@tanstack/react-query";
 
 import { EVENTS_DEFAULT_CENTER } from "../constants";
 import { eventsService } from "../services";
+import { useEventsStore } from "../store";
 import type { EventItemWithDistance, EventsPage, EventsQuery } from "../types";
 
 const EVENTS_PAGE_SIZE = 18;
@@ -85,6 +86,10 @@ const useEvents = () => {
     },
     [eventsQuery.data],
   );
+
+  useEffect(() => {
+    useEventsStore.getState().upsertEvents(events);
+  }, [events]);
 
   return {
     error: eventsQuery.error instanceof Error

@@ -12,14 +12,13 @@ import {
   MAP_POI_SEARCH_RADIUS_METERS,
   MAP_POI_SOURCE_ID,
 } from "../constants";
+import { useRoutePlan } from "../hooks";
 import { mapService } from "../services";
-import type { MapPoiFeatureCollection, MapPoiProperties, RoutePlanStop } from "../types";
+import type { MapPoiFeatureCollection, MapPoiProperties } from "../types";
 
 interface MapPoiLayerProps {
   isReady: boolean;
   map: Map | null;
-  plannedStopIds: string[];
-  onToggleStop: (stop: RoutePlanStop) => void;
 }
 
 const emptyPlaces: MapPoiFeatureCollection = {
@@ -267,12 +266,8 @@ const addPoiLayers = (
   });
 };
 
-const MapPoiLayer = ({
-  isReady,
-  map,
-  onToggleStop,
-  plannedStopIds,
-}: MapPoiLayerProps) => {
+const MapPoiLayer = ({ isReady, map }: MapPoiLayerProps) => {
+  const { plannedStopIds, toggleManualRouteStop } = useRoutePlan();
   const [places, setPlaces] = useState<MapPoiFeatureCollection>(emptyPlaces);
   const [requestedCenter, setRequestedCenter] = useState<[number, number] | null>(null);
   const [lastFetchedCenter, setLastFetchedCenter] = useState<[number, number] | null>(null);
@@ -403,7 +398,7 @@ const MapPoiLayer = ({
 
       const properties = feature.properties as MapPoiProperties;
       const stopId = getPoiStopId(properties);
-      onToggleStop({
+      toggleManualRouteStop({
         address: properties.address || properties.kind,
         id: stopId,
         kind: "place",
@@ -481,7 +476,7 @@ const MapPoiLayer = ({
 
       if (canUseMapStyle(map)) removePoiLayers(map);
     };
-  }, [isReady, map, onToggleStop, places, plannedStopIds]);
+  }, [isReady, map, places, plannedStopIds, toggleManualRouteStop]);
 
   useEffect(() => {
     if (!map || !isReady) return;

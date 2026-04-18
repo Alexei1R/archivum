@@ -5,6 +5,8 @@ export const EVENTS_DEFAULT_CENTER = {
 
 export const EVENTS_LIKES_STORAGE_KEY = "fuse:events:liked:v1";
 
+export const EVENTS_LIKED_ITEMS_STORAGE_KEY = "fuse:events:liked-items:v1";
+
 export const EVENT_SEARCH_CITIES = [
   { name: "Chisinau, Moldova", latitude: 47.0105, longitude: 28.8323 },
   { name: "Balti, Moldova", latitude: 47.7539, longitude: 27.9184 },

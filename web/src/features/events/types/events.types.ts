@@ -1,5 +1,6 @@
 export interface EventLocation {
   address: string;
+  coordinateQuality?: string;
   latitude: number;
   longitude: number;
   name: string;

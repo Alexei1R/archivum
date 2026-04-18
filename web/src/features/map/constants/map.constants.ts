@@ -44,13 +44,7 @@ export const MAP_POI_OVERPASS_ENDPOINTS = [
 
 export const MAP_POI_SOURCE_ID = "map-pois";
 
-export const MAP_EVENTS_SOURCE_ID = "map-events";
-
-export const MAP_EVENTS_ROUTE_SOURCE_ID = "map-events-route";
-
-export const MAP_EVENTS_ICON_ID = "map-event-star";
-
-export const MAP_EVENTS_PAGE_SIZE = 250;
+export const MAP_ROUTE_SOURCE_ID = "map-route";
 
 export const MAP_POI_LAYERS = {
   clusters: "map-pois-clusters",
@@ -62,16 +56,9 @@ export const MAP_POI_LAYERS = {
   labels: "map-pois-labels",
 };
 
-export const MAP_EVENTS_LAYERS = {
-  routeCasing: "map-events-route-casing",
-  route: "map-events-route",
-  clusters: "map-events-clusters",
-  clusterCount: "map-events-cluster-count",
-  markerShadow: "map-events-marker-shadow",
-  markers: "map-events-markers",
-  selectedMarkerShadow: "map-events-selected-marker-shadow",
-  selectedMarkers: "map-events-selected-markers",
-  labels: "map-events-labels",
+export const MAP_ROUTE_LAYERS = {
+  routeCasing: "map-route-casing",
+  route: "map-route",
 };
 
 export const MAP_POI_CATEGORIES: MapPoiCategory[] = [

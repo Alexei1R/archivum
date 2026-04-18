@@ -15,7 +15,8 @@ const Main = () => {
     isFetchingNextPage,
     isLoading,
   } = useEvents();
-  const { isLiked, toggleLike } = useEventsStore();
+  const isLiked = useEventsStore((state) => state.isLiked);
+  const toggleLike = useEventsStore((state) => state.toggleLike);
   const isMobile = useIsMobile();
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [mobileDetailsOpen, setMobileDetailsOpen] = useState(false);

@@ -10,7 +10,7 @@ interface EventCardProps {
   event: EventItemWithDistance;
   isLiked: boolean;
   onSelect: (event: EventItemWithDistance) => void;
-  onToggleLike: (eventId: string) => void;
+  onToggleLike: (event: EventItemWithDistance) => void;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
@@ -21,6 +21,7 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 });
 
 const getDistanceLabel = (distanceMeters: number) => {
+  if (!Number.isFinite(distanceMeters)) return "Distance unavailable";
   if (distanceMeters < 1000) return `${Math.round(distanceMeters)} m`;
 
   return `${(distanceMeters / 1000).toFixed(1)} km`;
@@ -66,7 +67,7 @@ const EventCard = ({
             )}
             onClick={(eventClick) => {
               eventClick.stopPropagation();
-              onToggleLike(event.id);
+              onToggleLike(event);
             }}
             size="icon"
             variant="ghost"

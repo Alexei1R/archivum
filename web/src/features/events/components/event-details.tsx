@@ -8,7 +8,7 @@ import type { EventItemWithDistance } from "../types";
 interface EventDetailsProps {
   event: EventItemWithDistance;
   isLiked: boolean;
-  onToggleLike: (eventId: string) => void;
+  onToggleLike: (event: EventItemWithDistance) => void;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
@@ -17,6 +17,7 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 });
 
 const getDistanceLabel = (distanceMeters: number) => {
+  if (!Number.isFinite(distanceMeters)) return "Distance unavailable";
   if (distanceMeters < 1000) return `${Math.round(distanceMeters)} m away`;
 
   return `${(distanceMeters / 1000).toFixed(1)} km away`;
@@ -58,7 +59,7 @@ const EventDetails = ({ event, isLiked, onToggleLike }: EventDetailsProps) => {
               "shrink-0 rounded-lg border",
               isLiked && "border-brand text-brand"
             )}
-            onClick={() => onToggleLike(event.id)}
+            onClick={() => onToggleLike(event)}
             size="icon"
             variant="ghost"
           >

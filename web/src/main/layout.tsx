@@ -11,7 +11,10 @@ export const Layout = () => {
                     <MainSidebar />
                 </Sidebar>
 
-                <Sidebar.Inset rounded="tl" className="pb-24 md:pb-0">
+                <Sidebar.Inset
+                    rounded="tl"
+                    className="min-h-0 overflow-hidden rounded-none border-0 md:rounded-tl-2xl md:border"
+                >
                     <Outlet />
                 </Sidebar.Inset>
             </div>
